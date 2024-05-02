@@ -1,3 +1,5 @@
+import logger from '../logger.js'
+
 export const viewsUserRegisterController = (req, res) => {
     if (req.session.user) {
         // Si el usuario ya está autenticado, redireccionar al perfil
@@ -23,8 +25,9 @@ export const viewsUserProfileController = (req, res) => {
         last_name: req.session.user.last_name,
         email: req.session.user.email,
         age: req.session.user.age,
+        cart: req.session.user.cart,
     };
-    //console.log(userInfo);
+    logger.debug('UserInfo:', userInfo);
     res.render('profile', userInfo);
 }
 
@@ -32,9 +35,16 @@ export const viewsUserLogoutController = (req, res) => {
     // Destruir la sesión actual del usuario
     req.session.destroy((err) => {
         if (err) {
-            console.log(err.message);
+            logger.error(err.message);
         }
         // Redireccionar a la vista de inicio de sesión
         res.redirect('/login');
     });
 }
+
+export const viewsUserForgetPasswordController = (req, res) => {
+
+    res.render('forget-password');
+}
+
+

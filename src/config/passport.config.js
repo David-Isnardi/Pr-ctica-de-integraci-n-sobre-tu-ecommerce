@@ -5,6 +5,7 @@ import UserModel from '../dao/GeneralModels/user.model.js';
 import { hasAdminCredentials } from "../public/js/authMiddleware.js";
 import bcrypt from 'bcryptjs';
 import config from './config.js';
+import logger from "../logger.js"
 
 // Datos de configuración de la estrategia de autenticación con Github
 const githubClientID = config.githubClientId;
@@ -54,7 +55,7 @@ const initializePassport = () => {
 
         return done(null, newUser);
       } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return done(error);
       }
     }));
@@ -84,7 +85,7 @@ const initializePassport = () => {
 
         return done(null, user);
       } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return done(error);
       }
     }));
@@ -94,7 +95,7 @@ const initializePassport = () => {
       clientSecret: githubClientSecret,
       callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
   }, async (accessToken, refreshToken, profile, done) => {
-      console.log(profile)
+      logger.debug(profile)
       try {
           const user = await UserModel.findOne({ email: profile._json.email})
           if (user) return done(null, user)
@@ -108,7 +109,7 @@ const initializePassport = () => {
           return done(null, newUser)
       }
       catch (error) {
-          console.log(error.message)
+          logger.error(error.message)
           return done('Error al intentar loguearse con Github.')
       }
   }));

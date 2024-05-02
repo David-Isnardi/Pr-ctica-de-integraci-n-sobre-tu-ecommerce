@@ -1,4 +1,5 @@
 import fs from 'fs'
+import logger from '../../logger.js'
 
 class ProductManager {
     #products
@@ -7,7 +8,7 @@ class ProductManager {
     constructor() {
         this.#products = [];
         this.#error = undefined;
-        this.#path = './src/products.json';
+        this.#path = './src/productos.json';
     }
 
     #generateId = () => (this.#products.length === 0) ? 1 : this.#products[this.#products.length - 1].id + 1
@@ -29,7 +30,7 @@ class ProductManager {
             await fs.promises.writeFile(this.#path, JSON.stringify(this.#products, null, '\t'))
         }
         else {
-            console.log(this.#error)
+            logger.error(this.#error)
         } 
     }
 
@@ -37,7 +38,7 @@ class ProductManager {
         const existe = fs.existsSync(this.#path)
         if (!existe) {
             await fs.promises.writeFile(this.#path, JSON.stringify(this.#products, null, '\t'))
-            console.log("El archivo de productos no existia, se acaba de crear")
+            logger.info("El archivo de productos no existia, se acaba de crear")
         }
         const contenido = await fs.promises.readFile(this.#path, 'utf-8'); 
         return JSON.parse(contenido);
@@ -46,38 +47,38 @@ class ProductManager {
     getProductById = async (id) => {
         const products = await this.getProducts();
         const product = await products.find(p => p.id === id);
-        console.log("------------------------ Busqueda por Id -----------------------------")
-        console.log('ID ingresado: ' + id);
+        logger.debug("------------------------ Busqueda por Id -----------------------------")
+        logger.debug('ID ingresado: ' + id);
         if (!product) return 'Not Found';
-        console.log('Producto encontrado: ');
+        logger.debug('Producto encontrado: ');
         return product;
     }
 
     updateProduct = async (id, updatedFields) => {
-        console.log("------------------------ Actualizacion de producto -----------------------------")
+        logger.debug("------------------------ Actualizacion de producto -----------------------------")
         const products = await this.getProducts();
         const productIndex = products.findIndex(p => p.id === id);
         if (productIndex === -1) {
-            console.log(`Producto con id ${id} no encontrado`);
+            logger.debug(`Producto con id ${id} no encontrado`);
             return;
         }
         const updatedProduct = { ...products[productIndex], ...updatedFields };
         products[productIndex] = updatedProduct;
         await fs.promises.writeFile(this.#path, JSON.stringify(products, null, '\t'));
-        console.log(`Producto con id ${id} actualizado`);
+        logger.info(`Producto con id ${id} actualizado`);
     }
 
     deleteProduct = async (id) => {
-        console.log("------------------------ Eliminación de producto -----------------------------")
+        logger.debug("------------------------ Eliminación de producto -----------------------------")
         const products = await this.getProducts();
         const productIndex = products.findIndex(p => p.id === id);
         if (productIndex === -1) {
-            console.log(`Producto con id ${id} no encontrado`);
+            logger.info(`Producto con id ${id} no encontrado`);
             return false;
         }
         products.splice(productIndex, 1);
         await fs.promises.writeFile(this.#path, JSON.stringify(products, null, '\t'));
-        console.log(`Producto con id ${id} eliminado`);
+        logger.info(`Producto con id ${id} eliminado`);
         return true;
     }
 

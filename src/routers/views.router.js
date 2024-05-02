@@ -1,7 +1,5 @@
 import { Router } from "express"
-import  productModel  from "../dao/GeneralModels/product.model.js";
-import  cartModel  from "../dao/GeneralModels/cart.model.js";
-import { isAuthenticated, isAdmin, hasAdminCredentials } from "../public/js/authMiddleware.js";
+import { isAuthenticated, isAdminOrPremium, hasAdminCredentials } from "../public/js/authMiddleware.js";
 import { 
   readViewsProductsController, 
   readViewsRealTimeProductsController, 
@@ -13,7 +11,7 @@ const router = Router();
 
 router.get('/', isAuthenticated, readViewsProductsController); // Devuelve todos los productos
   
-router.get('/realtimeproducts', isAuthenticated, isAdmin, readViewsRealTimeProductsController); // Devuelve todos los productos en tiempo real
+router.get('/realtimeproducts', isAuthenticated, isAdminOrPremium, readViewsRealTimeProductsController); // Devuelve todos los productos en tiempo real
 
 router.get('/:cid', isAuthenticated, readViewsProductController) // Devuelve un producto según su id
 

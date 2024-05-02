@@ -1,6 +1,4 @@
 import { Router } from "express";
-import Cart from '../dao/GeneralModels/cart.model.js';
-import Product from '../dao/GeneralModels/product.model.js';
 import { 
   readCartsController, 
   readCartController, 
@@ -9,7 +7,8 @@ import {
   updateProductsCartController,
   updateProductCartController,
   deleteProductCartController,
-  deleteProductsCartController 
+  deleteProductsCartController,
+  purchaseCartController 
 } from "../controllers/cart.controller.js";
 
 const router = Router();
@@ -20,6 +19,8 @@ const router = Router();
 router.get('/', readCartsController); // Devuelve todos los carritos
   
 router.get('/:cid', readCartController); // Devuelve un carrito según su id
+
+router.get('/:cid/purchase', purchaseCartController); // Ruta para finalizar la compra de los productos agregados al carrito
   
 router.post('/', createCartController); // Crea un carrito
   
